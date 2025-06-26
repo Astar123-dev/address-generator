@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京丰台区地址生成器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #generateBtn {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+        }
+        
+        #copyBtn {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+        }
+        
+        #generateBtn:hover {
+            background: linear-gradient(to right, #2980b9, #2573a7);
+            transform: translateY(-2px);
+        }
+        
+        #copyBtn:hover {
+            background: linear-gradient(to right, #27ae60, #219653);
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            text-align: left;
+            margin-top: 20px;
+        }
+        
+        .result h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result h2 i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .result-item {
+            margin-bottom: 12px;
+            display: flex;
+        }
+        
+        .result-label {
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 100px;
+        }
+        
+        .result-value {
+            color: #34495e;
+            word-break: break-all;
+            flex: 1;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(46, 204, 113, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 25px;
+            text-align: left;
+            font-size: 14px;
+            color: #34495e;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #2980b9;
+            display: flex;
+            align-items: center;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>北京丰台区地址生成器</h1>
+        <p class="subtitle">输入手机尾号，一键生成完整地址信息</p>
+        
+        <div class="input-group">
+            <label for="phoneSuffix">手机尾号 (4位)</label>
+            <input type="text" id="phoneSuffix" maxlength="4" placeholder="请输入手机尾号4位数字">
+        </div>
+        
+        <div class="button-group">
+            <button id="generateBtn">生成地址</button>
+            <button id="copyBtn">复制地址</button>
+        </div>
+        
+        <div class="result" id="resultContainer">
+            <h2><i class="fas fa-address-card"></i> 生成的地址信息</h2>
+            <div class="result-item">
+                <div class="result-label">收货人：</div>
+                <div class="result-value" id="nameResult">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">收件电话：</div>
+                <div class="result-value" id="phoneResult">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">收货地址：</div>
+                <div class="result-value" id="addressResult">-</div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+            <ul>
+                <li>在输入框中输入手机号后4位</li>
+                <li>点击"生成地址"按钮创建地址信息</li>
+                <li>点击"复制地址"一键复制所有信息</li>
+                <li>生成规则：收货人随机中文姓名，电话以154开头，地址在丰台区瑞福花园20楼以上</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">地址已复制到剪贴板！</div>
+    
+    <!-- 使用FontAwesome图标 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    
+    <script>
+        // 姓氏库
+        const familyNames = [
+            '王', '李', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴',
+            '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗',
+            '梁', '宋', '郑', '谢', '韩', '唐', '冯', '于', '董', '萧'
+        ];
+        
+        // 名字库
+        const givenNames = [
+            '伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '洋',
+            '艳', '勇', '军', '杰', '娟', '涛', '明', '超', '秀兰', '霞',
+            '平', '刚', '桂英', '文', '鑫', '波', '宁', '建华', '俊', '琳',
+            '雪', '慧', '海', '欣', '婷', '玉兰', '帆', '璐', '旭', '宇'
+        ];
+        
+        // 生成随机中文姓名
+        function generateChineseName() {
+            const familyName = familyNames[Math.floor(Math.random() * familyNames.length)];
+            const givenName = givenNames[Math.floor(Math.random() * givenNames.length)];
+            return familyName + givenName;
+        }
+        
+        // 生成完整电话号码
+        function generatePhoneNumber(suffix) {
+            // 154开头 + 3位随机数 + 4位尾号
+            const middle = Math.floor(100 + Math.random() * 900); // 生成3位随机数
+            return `154${middle}${suffix}`;
+        }
+        
+        // 生成完整地址
+        function generateAddress() {
+            // 生成301-1000之间的随机门牌号
+            const doorNumber = Math.floor(301 + Math.random() * 700);
+            
+            // 生成20-50之间的随机楼号（20楼以上）
+            const buildingNumber = Math.floor(20 + Math.random() * 31);
+            
+            // 生成1-5之间的随机单元号
+            const unitNumber = Math.floor(1 + Math.random() * 5);
+            
+            // 生成100-999之间的随机室号
+            const roomNumber = Math.floor(100 + Math.random() * 900);
+            
+            return `北京市丰台区新村街道纪家庙${doorNumber}号瑞福花园${buildingNumber}号楼${unitNumber}单元${roomNumber}室`;
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+        
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generateBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const phoneSuffixInput = document.getElementById('phoneSuffix');
+            
+            // 生成地址按钮点击事件
+            generateBtn.addEventListener('click', function() {
+                const suffix = phoneSuffixInput.value.trim();
+                
+                // 验证输入
+                if (suffix.length !== 4 || !/^\d{4}$/.test(suffix)) {
+                    showNotification('请输入4位数字的手机尾号');
+                    return;
+                }
+                
+                // 生成数据
+                const name = generateChineseName();
+                const phone = generatePhoneNumber(suffix);
+                const address = generateAddress();
+                
+                // 显示结果
+                document.getElementById('nameResult').textContent = name;
+                document.getElementById('phoneResult').textContent = phone;
+                document.getElementById('addressResult').textContent = address;
+            });
+            
+            // 复制地址按钮点击事件
+            copyBtn.addEventListener('click', function() {
+                const name = document.getElementById('nameResult').textContent;
+                const phone = document.getElementById('phoneResult').textContent;
+                const address = document.getElementById('addressResult').textContent;
+                
+                if (name === '-' || phone === '-' || address === '-') {
+                    showNotification('请先生成地址信息');
+                    return;
+                }
+                
+                // 拼接完整信息
+                const fullInfo = `收货人：${name}\n收件电话：${phone}\n收货地址：${address}`;
+                
+                // 复制到剪贴板
+                navigator.clipboard.writeText(fullInfo).then(() => {
+                    showNotification('地址已复制到剪贴板！');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    showNotification('复制失败，请手动复制');
+                });
+            });
+            
+            // 限制输入只能为数字
+            phoneSuffixInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^\d]/g, '').slice(0, 4);
+            });
+        });
+    </script>
+</body>
+</html>
